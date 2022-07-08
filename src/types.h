@@ -14,10 +14,10 @@ enum Square {A1, A2, A3, A4, A5, A6, A7, A8,
              G1, G2, G3, G4, G5, G6, G7, G8,
              H1, H2, H3, H4, H5, H6, H7, H8};
 
-#define SQUARE_NUM 65
+#define SQUARE_NUM 64
 
 // The bit board equivalent of a square
-#define square_BB(SQ) ((int64_t)(1 << SQ)) 
+#define square_BB(SQ) ((int64_t)(1ULL << SQ)) 
 
 // Returns 1 if the piece has a valid value, 0 otherwise
 #define is_valid_square(SQ) (0 <= SQ && 64 >= SQ)
@@ -45,6 +45,7 @@ enum Square {A1, A2, A3, A4, A5, A6, A7, A8,
 //                             1 - promotion
 //                             2 - en passant
 //                             3 - castling
+typedef int16_t Move;
 
 // Move type flags
 #define NORMAL      0
@@ -63,7 +64,7 @@ enum Square {A1, A2, A3, A4, A5, A6, A7, A8,
 // @param ORIGIN: Origin square
 // @param PIECE: Promoted piece
 // @param FLAG: The move type 
-#define get_move(DEST, ORIGIN, PROM, FLAG) (DEST | (ORIGIN << 6) | PROM | FLAG)
+#define get_move(DEST, ORIGIN, PROM, FLAG) ((Move)(DEST | (ORIGIN << 6) | PROM | FLAG))
 
 // Piece type : Uppercase - White pieces
 //              Lowercase - Black pieces
@@ -89,11 +90,38 @@ enum Piece {P, N, B, R, Q, K,
 // The state of the game.
 enum State {ONGOING, UNKNOWN, DRAW, WIN, LOSE};
 
+// Castling rights can be represented on 4 bits:
+//   bit 0: White's king side castle
+//   bit 1: White's queen side castle
+//   bit 2: Black's king side castle
+//   bit 3: Black's queen side castle
+typedef int16_t CastlingRights;
+
+#define CASTLE_WHITE_OO     1
+#define CASTLE_WHITE_OOO    2
+#define CASTLE_BLACK_OO     4
+#define CASTLE_BLACK_OOO    8
+#define CASTLE_ALL          15
+#define CASTLE_WHITE        3
+#define CASTLE_BLACK        12
+#define CASTLE_KING_SIDE    5
+#define CASTLE_QUEEN_SIDE   10
+ 
+enum Color {WHITE, BLACK};
+#define COLOR_NUM 2
+
+typedef int64_t Bitboard;
+
 // Data type of a position.
 typedef struct {
     // piece_BB[PIECE] = the bitboard of the piece "PIECE"
     // piece_BB[PIECE_NULL] = the empty squares on the board
-    int64_t piece_BB[PIECE_NUM]; 
+    Bitboard piece_BB[PIECE_NUM];
+    // Squares of the board where a pawn of the specified color can en_passant
+    Bitboard en_passant_mask[COLOR_NUM];
+    int piece_count[PIECE_NUM];
+    CastlingRights castle_rights;
+    enum Color turn;
     enum State state;
 } Position;
 
