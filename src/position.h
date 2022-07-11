@@ -6,6 +6,9 @@
 // Sets up the initial position of a game of chess.
 void position_init(Position* pos);
 
+// Adds a piece on a specified square.
+void add_piece(Position* pos, int square, int piece);
+
 // Sets up a position given the FEN string.
 Position FEN_to_position(char *FEN);
 
@@ -14,5 +17,8 @@ char* position_to_FEN(Position* pos);
 
 // Prints a position in stdout.
 void printf_position(Position* pos);
+
+// Prints all the information about a position in stdout. 
+void printf_position_debug(Position* pos);
 
 #endif // _POSITION_H

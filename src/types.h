@@ -85,7 +85,7 @@ enum Piece {P, N, B, R, Q, K,
 #define piece_to_white(PIECE) (PIECE >  5 ? (PIECE - 5) : PIECE)
 
 // Returns 1 if the piece has a valid value, 0 otherwise
-#define is_valid_piece(PIECE) (1 <= PIECE && PIECE <= 12)
+#define is_valid_piece(PIECE) (0 <= PIECE && PIECE <= 12)
 
 // The state of the game.
 enum State {ONGOING, UNKNOWN, DRAW, WIN, LOSE};
@@ -106,6 +106,7 @@ typedef int16_t CastlingRights;
 #define CASTLE_BLACK        12
 #define CASTLE_KING_SIDE    5
 #define CASTLE_QUEEN_SIDE   10
+#define CASTLE_NULL         0
  
 enum Color {WHITE, BLACK};
 #define COLOR_NUM 2
