@@ -77,12 +77,12 @@ Position FEN_to_position(char *FEN)
         }
         
         // Handling pieces.
-        if (1) {
+        if (square != 64) {
             int has_changed = 0;
             for (int i = 0; i < 12; i++) {
                 if (FEN[index] == pieces_chars[i]) {
                     add_piece(&pos, square, i);
-
+ 
                     square += 8;
                     index++;
                     has_changed = 1;
