@@ -60,7 +60,7 @@ Position FEN_to_position(char *FEN)
     }
     
     int index = 0;
-    int square = 0;
+    int square = A8;
     char pieces_chars[12] = {'P', 'N', 'B', 'R', 'Q', 'K',
                              'p', 'n', 'b', 'r', 'q', 'k'};
 
@@ -72,17 +72,18 @@ Position FEN_to_position(char *FEN)
 
         if (FEN[index] == '/') {
             index++;
+            square -= 65;
             continue;
         }
         
         // Handling pieces.
-        if (square <= 63) {
+        if (1) {
             int has_changed = 0;
             for (int i = 0; i < 12; i++) {
                 if (FEN[index] == pieces_chars[i]) {
                     add_piece(&pos, square, i);
 
-                    square++;
+                    square += 8;
                     index++;
                     has_changed = 1;
                     break;
@@ -96,7 +97,7 @@ Position FEN_to_position(char *FEN)
                 int num = FEN[index] - '1';
                 for (int i = 0; i <= num; i++) {
                     add_piece(&pos, square, PIECE_NULL);
-                    square++;
+                    square += 8;
                     has_changed = 1;
                 }
                 index++;
@@ -153,12 +154,12 @@ void printf_position(Position* pos)
 {
     char pieces_char[PIECE_NUM] = {'P', 'N', 'B', 'R', 'Q', 'K',
                                    'p', 'n', 'b', 'r', 'q', 'k', '-'};
-    for (int i = 0; i < 8; i++) {
-        printf("%d:  ", 8 - i);
+    for (int rank = 7; rank >= 0; rank--) {
+        printf("%d:  ", rank + 1);
 
-        for (int j = 0; j < 8; j++) {
+        for (int file = 0; file < 8; file++) {
             for (int k = 0; k < PIECE_NUM; k++)
-                if(pos->piece_BB[k] & square_BB((i*8 + j)))
+                if(pos->piece_BB[k] & square_BB((file*8 + rank)))
                     printf("%c ", pieces_char[k]);
             
         }
