@@ -24,14 +24,14 @@ enum Square {A1, A2, A3, A4, A5, A6, A7, A8,
 #define on_board_square(SQ) (0 <= SQ && 63 >= SQ)
 
 // The adjacent squares to SQ
-#define squareN(SQ)  (SQ - 8)
-#define squareS(SQ)  (SQ + 8)
-#define squareE(SQ)  (SQ + 1)
-#define squareW(SQ)  (SQ - 1)
-#define squareNE(SQ) (SQ - 7)
-#define squareNW(SQ) (SQ - 9)
-#define squareSE(SQ) (SQ + 9)
-#define squareSW(SQ) (SQ + 7)
+#define squareN(SQ)  (SQ + 1)
+#define squareS(SQ)  (SQ - 1)
+#define squareE(SQ)  (SQ + 8)
+#define squareW(SQ)  (SQ - 8)
+#define squareNE(SQ) (SQ + 9)
+#define squareNW(SQ) (SQ - 7)
+#define squareSE(SQ) (SQ + 7)
+#define squareSW(SQ) (SQ - 9)
 
 // A move can be represented on 16 bits as such
 //
