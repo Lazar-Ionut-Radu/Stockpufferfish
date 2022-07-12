@@ -36,6 +36,21 @@
 #define QueenSide_BB (FileA_BB | FileB_BB | FileC_BB | FileD_BB)
 #define KingSide_BB  (FileE_BB | FileF_BB | FileG_BB | FileH_BB)
 #define Center_BB    ((FileD_BB | FileE_BB) & (Rank4_BB | Rank5_BB))
-
 #define NULL_BB 0
+
+// Least significant bit set to 1.
+#define LSB(x) ((int64_t)x & (-x))
+
+// Logarithm, to be more precise floor(log(x)).
+// With the added caveat that here LOG(0) = 0
+#define LOG_2(x) (((x) >= 2ULL) ? 1 : 0)
+#define LOG_4(x) (((x) >= 1ULL<<2) ? (2 + LOG_2((x)>>2)) : LOG_2(x))
+#define LOG_8(x) (((x) >= 1ULL<<4) ? (4 + LOG_4((x)>>4)) : LOG_4(x))
+#define LOG_16(x) (((x) >= 1ULL<<8) ? (8 + LOG_8((x)>>8)) : LOG_8(x))
+#define LOG_32(x) (((x) >= 1ULL<<16) ? (16 + LOG_16((x)>>16)) : LOG_16(x))
+#define LOG(x)   (((x) >= 1ULL<<32) ? (32 + LOG_32((x)>>32)) : LOG_32(x))
+
+// Most significant bit set to 1.
+#define MSB(x) ((x == 0) ? 0 : (1ULL << LOG(x)))
+
 #endif // _BITBOARDS_H
