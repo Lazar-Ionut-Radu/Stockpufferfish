@@ -1,3 +1,7 @@
+// Stockpufferfish (c) 2022 by Lazar Ionut-Radu
+// This code is licensed under the terms of the GNU General 
+// Public License (see licence.txt for details)
+
 #ifndef _TYPES_H
 #define _TYPES_H
 

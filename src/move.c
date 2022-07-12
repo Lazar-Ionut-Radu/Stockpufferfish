@@ -1,3 +1,7 @@
+// Stockpufferfish (c) 2022 by Lazar Ionut-Radu
+// This code is licensed under the terms of the GNU General 
+// Public License (see licence.txt for details)
+
 #include "move.h"
 
 char* move_to_AN(Position* pos, Move move)
