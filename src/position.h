@@ -15,6 +15,9 @@ Position FEN_to_position(char *FEN);
 // Outputs the FEN string of a given position.
 char* position_to_FEN(Position* pos);
 
+// Returns the piece on a particular square.
+enum Piece get_piece(Position* pos, int square);
+
 // Prints a position in stdout.
 void printf_position(Position* pos);
 

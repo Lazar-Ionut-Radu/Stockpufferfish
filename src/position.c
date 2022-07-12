@@ -1,5 +1,7 @@
 #include "position.h"
 #include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 
 void position_init(Position* pos)
 {
@@ -177,7 +179,14 @@ Position FEN_to_position(char *FEN)
 
 char* position_to_FEN(Position* pos)
 {
-    char FEN[100];
+}
+
+enum Piece get_piece(Position* pos, int square)
+{
+    for (int i = 0; i < PIECE_NUM; i++) {
+        if (pos->piece_BB[i] & square_BB(square))
+            return i;
+    }
 }
 
 void printf_position(Position* pos)

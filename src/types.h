@@ -50,17 +50,27 @@ enum Square {A1, A2, A3, A4, A5, A6, A7, A8,
 //                             3 - castling
 typedef int16_t Move;
 
+#define get_dest_square(move) (move & 63)
+#define get_origin_square(move) ((move >> 6) & 63) 
+
 // Move type flags
 #define NORMAL      0
 #define PROMOTION  (1 << 14)
 #define EN_PASSANT (2 << 14)
 #define CASTLING   (3 << 14)
 
+#define is_promotion(move) (move & PROMOTION)
+#define is_en_passant(move) (move & EN_PASSANT)
+#define is_castling(move) (move & CASTLING)
+#define is_normal(move) (!is_promotion(move) && !is_en_passant(move) && !is_castling(move))
+
 // Promoted pieces
 #define PROM_KNIGHT  0
 #define PROM_BISHOP (1 << 12)
 #define PROM_ROOK   (2 << 12)
 #define PROM_QUEEN  (3 << 12)
+
+#define get_promoted_piece(move) (move & (3 << 12))
 
 // Returns the move given it's components
 // @param DEST: Destination square
