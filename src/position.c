@@ -46,8 +46,6 @@ void add_piece(Position* pos, int square, int piece)
 
 Position FEN_to_position(char *FEN)
 {
-    // TODO: add en_passant and half/full move clock
-    
     // Initializing.
     Position pos;
     pos.state = ONGOING;
@@ -58,12 +56,15 @@ Position FEN_to_position(char *FEN)
         pos.piece_BB[i] = 0;
         pos.piece_count[i] = 0;
     }
+    pos.halfmove_clock = 0;
+    pos.fullmove_clock = 0;
     
     int index = 0;
     int square = A8;
     char pieces_chars[12] = {'P', 'N', 'B', 'R', 'Q', 'K',
                              'p', 'n', 'b', 'r', 'q', 'k'};
 
+    // Looping through the string.
     while (FEN[index]) {
         if (FEN[index] == ' ') {
             index++;
@@ -140,6 +141,35 @@ Position FEN_to_position(char *FEN)
             index++;
             continue;
         }
+
+        // En passant.
+        if (FEN[index] == '-') {
+            pos.en_passant_mask[WHITE] = NULL_BB;
+            pos.en_passant_mask[BLACK] = NULL_BB;
+            
+            index++;
+            continue;
+        }
+        else if (FEN[index + 1] >= '1' && FEN[index + 1] <= '8' && 
+                 FEN[index] >= 'a' && FEN[index] <= 'h')  {
+            int square_en_passant = (FEN[index] - 'a') * 8 + (FEN[index + 1] - '1');
+            pos.en_passant_mask[pos.turn] = square_BB(square_en_passant);
+            pos.en_passant_mask[OPPOSITE_COLOR(pos.turn)] = NULL_BB;
+            
+            index += 2;
+            continue;
+        }
+        
+        // Halfmove and fullmove clock.
+        while (FEN[index] != ' ') {
+            pos.halfmove_clock = pos.halfmove_clock * 10 + (FEN[index] - '0');
+            index++;
+        }
+        index++;
+        while (FEN[index]) {
+            pos.fullmove_clock = pos.fullmove_clock * 10 + (FEN[index] - '0');
+            index++;
+        }
     }
 
     return pos;
@@ -147,7 +177,7 @@ Position FEN_to_position(char *FEN)
 
 char* position_to_FEN(Position* pos)
 {
-
+    char FEN[100];
 }
 
 void printf_position(Position* pos)
@@ -194,6 +224,12 @@ void printf_position_debug(Position* pos)
         printf("White");
     else 
         printf("Black");
-    printf("\n");
+    
+    if (square(pos->en_passant_mask[pos->turn]))
+        printf("\nEn passant square: %c%d\n", square(pos->en_passant_mask[pos->turn]) / 8 + 'a',
+                                              square(pos->en_passant_mask[pos->turn]) % 8 + 1);
+    else
+        printf("\nEn passant square: -\n");
 
+    printf("Halfmove / Fullmove clock: %d %d\n", pos->halfmove_clock, pos->fullmove_clock);
 }

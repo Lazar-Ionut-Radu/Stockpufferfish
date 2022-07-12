@@ -19,6 +19,9 @@ enum Square {A1, A2, A3, A4, A5, A6, A7, A8,
 // The bit board equivalent of a square
 #define square_BB(SQ) ((int64_t)(1ULL << SQ)) 
 
+// The square given by it's bitboard
+#define square(SQ_BB) (LOG(SQ_BB))
+
 // Returns 1 if the piece has a valid value, 0 otherwise
 #define is_valid_square(SQ) (0 <= SQ && 64 >= SQ)
 #define on_board_square(SQ) (0 <= SQ && 63 >= SQ)
@@ -110,6 +113,7 @@ typedef int16_t CastlingRights;
  
 enum Color {WHITE, BLACK};
 #define COLOR_NUM 2
+#define OPPOSITE_COLOR(x) ((x == WHITE) ? BLACK : WHITE)
 
 typedef int64_t Bitboard;
 
@@ -118,12 +122,19 @@ typedef struct {
     // piece_BB[PIECE] = the bitboard of the piece "PIECE"
     // piece_BB[PIECE_NULL] = the empty squares on the board
     Bitboard piece_BB[PIECE_NUM];
-    // Squares of the board where a pawn of the specified color can en_passant
+    // Squares of the board where a pawn of the specified color can en_passant.
+    // If it is white's turn and en_passant is possible, en_passant_mask[WHITE]
+    // will be non-zero. 
     Bitboard en_passant_mask[COLOR_NUM];
     int piece_count[PIECE_NUM];
     CastlingRights castle_rights;
     enum Color turn;
     enum State state;
+    // The number of halfmoves since the last capture or pawn advancement.
+    // Used for fifty-move rule.
+    int halfmove_clock;
+    // Number of full moves. Starts at 1 and is incremented after black's move.
+    int fullmove_clock;
 } Position;
 
 #endif // _TYPES_H
