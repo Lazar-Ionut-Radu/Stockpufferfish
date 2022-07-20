@@ -9,11 +9,13 @@
 #include "position.h"
 #include "types.h"
 
-// AN is short to algebraic notation.
-// NOTE: pos is the position after the move was made.
-char* move_to_AN(Position* pos, Move move);
+// Returns the Algebraic Notation of the given move.
+// NOTE: - pos is the position before the move was made.
+//       - It is assumed that the move is legal.
+void move_to_AN(char **AN, Position* pos, Move move);
 
 // Plays the move on the board and updates the position accordingly.
+// NOTE: It is assumed that the move is legal.
 void make_move(Position* pos, Move move);
 
 // Returns the position to the state it was before the move was played.

@@ -3,10 +3,84 @@
 // Public License (see licence.txt for details)
 
 #include "move.h"
+#include <math.h>
+#include <stdio.h>
+#include <string.h>
 
-char* move_to_AN(Position* pos, Move move)
+// TODO : 1) add ++ / # to show check & checkmate
+//        2) add a check for ambiguity. Moves like Rdf8 as opposed 
+//                                               to Rf8
+//        3) whyyy doesn't it work...
+void move_to_AN(char **AN, Position* pos, Move move)
 {
-    
+    enum Square dest = get_dest_square(move);
+    enum Square origin = get_origin_square(move);
+
+    enum Piece piece; // The moved piece.
+    piece = get_piece(pos, origin);
+
+    char pieces_chars[12] = {'P', 'N', 'B', 'R', 'Q', 'K',
+                             'p', 'n', 'b', 'r', 'q', 'k'};
+    // Castling:
+    if (is_castling(move)) {
+        if (dest == G1 || dest == G8)
+            strcpy(*AN, "O-O\0");
+        else 
+            strcpy(*AN ,"O-O-O\0");
+    }
+
+    // Pawn moves:
+    if (piece == P || piece == p)
+    {
+        // Non-capture pawn move:
+        if (abs(dest - origin) <= 2) {
+            *AN[0] = dest / 8 + 'a';
+            *AN[1] = dest % 8 + '1';
+            *AN[2] = '\0';
+
+            // Promotion:
+            if (is_promotion(move)) {
+                *AN[2] = '=';
+                
+                if (get_promoted_piece(move) == PROM_KNIGHT)
+                    *AN[3] = pieces_chars[N] + 6*pos->turn;
+                else if (get_promoted_piece(move) == PROM_BISHOP)
+                    *AN[3] = pieces_chars[B] + 6*pos->turn;
+                else if (get_promoted_piece(move) == PROM_ROOK)
+                    *AN[3] = pieces_chars[R] + 6*pos->turn;
+                else if (get_promoted_piece(move) == PROM_QUEEN)
+                    *AN[3] = pieces_chars[Q] + 6*pos->turn;
+
+                *AN[4] = '\0';
+            }
+        }   
+        else { // Capture pawn moves:
+            
+            *AN[0] = origin / 8 + 'a';
+            *AN[1] = 'x';
+            *AN[2] = dest / 8 + 'a';
+            *AN[3] = dest % 8 + '1';
+            *AN[4] = '\0';
+
+            // Capture into promotion:
+            if (is_promotion(move)) {
+                *AN[4] = '=';
+                
+                if (get_promoted_piece(move) == PROM_KNIGHT)
+                    *AN[5] = pieces_chars[N] + 6*pos->turn;
+                else if (get_promoted_piece(move) == PROM_BISHOP)
+                    *AN[5] = pieces_chars[B] + 6*pos->turn;
+                else if (get_promoted_piece(move) == PROM_ROOK)
+                    *AN[5] = pieces_chars[R] + 6*pos->turn;
+                else if (get_promoted_piece(move) == PROM_QUEEN)
+                    *AN[5] = pieces_chars[Q] + 6*pos->turn;
+
+                *AN[6] = '\0';
+            }
+        }
+    }
+
+    *AN[9] = '\0';
 }
 
 void make_move(Position* pos, Move move)
@@ -23,7 +97,7 @@ void make_move(Position* pos, Move move)
     // Plays the move on the board.
     enum Square dest = get_dest_square(move);
     enum Square origin = get_origin_square(move);
-    enum Piece piece;
+    enum Piece piece; // The moved piece.
     
     // For pawn promotion.
     if (is_promotion(move))

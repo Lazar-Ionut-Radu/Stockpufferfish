@@ -9,7 +9,7 @@
 
 void position_init(Position* pos)
 {
-    FEN_to_position("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq");
+    *pos = FEN_to_position("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq");
 
     pos->en_passant_mask[WHITE] = 0;
     pos->en_passant_mask[BLACK] = 0;
