@@ -63,9 +63,9 @@ typedef int16_t Move;
 #define EN_PASSANT (2 << 14)
 #define CASTLING   (3 << 14)
 
-#define is_promotion(move) (move & PROMOTION)
-#define is_en_passant(move) (move & EN_PASSANT)
-#define is_castling(move) (move & CASTLING)
+#define is_promotion(move) ((move & (3 << 14)) == PROMOTION)
+#define is_en_passant(move) ((move & (3 << 14)) == EN_PASSANT)
+#define is_castling(move) ((move & (3 << 14)) == CASTLING)
 #define is_normal(move) (!is_promotion(move) && !is_en_passant(move) && !is_castling(move))
 
 // Promoted pieces
@@ -136,17 +136,21 @@ typedef struct {
     // piece_BB[PIECE] = the bitboard of the piece "PIECE"
     // piece_BB[PIECE_NULL] = the empty squares on the board
     Bitboard piece_BB[PIECE_NUM];
+
     // Squares of the board where a pawn of the specified color can en_passant.
     // If it is white's turn and en_passant is possible, en_passant_mask[WHITE]
     // will be non-zero. 
     Bitboard en_passant_mask[COLOR_NUM];
+
     int piece_count[PIECE_NUM];
     CastlingRights castle_rights;
     enum Color turn;
     enum State state;
+
     // The number of halfmoves since the last capture or pawn advancement.
     // Used for fifty-move rule.
     int halfmove_clock;
+    
     // Number of full moves. Starts at 1 and is incremented after black's move.
     int fullmove_clock;
 } Position;

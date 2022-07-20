@@ -238,9 +238,9 @@ void printf_position_debug(Position* pos)
     else 
         printf("Black");
     
-    if (square(pos->en_passant_mask[pos->turn]))
-        printf("\nEn passant square: %c%d\n", square(pos->en_passant_mask[pos->turn]) / 8 + 'a',
-                                              square(pos->en_passant_mask[pos->turn]) % 8 + 1);
+    if (square(pos->en_passant_mask[OPPOSITE_COLOR(pos->turn)]))
+        printf("\nEn passant square: %c%d\n", square(pos->en_passant_mask[OPPOSITE_COLOR(pos->turn)]) / 8 + 'a',
+                                              square(pos->en_passant_mask[OPPOSITE_COLOR(pos->turn)]) % 8 + 1);
     else
         printf("\nEn passant square: -\n");
 
