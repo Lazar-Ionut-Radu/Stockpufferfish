@@ -91,7 +91,8 @@ typedef int16_t Move;
 //              R/r       - Rook
 //              Q/q       - Queen
 //              K/k       - King
-enum Piece {P, N, B, R, Q, K,
+enum Piece {INVALID_PIECE = -1,
+            P, N, B, R, Q, K,
             p, n, b, r, q, k,
             PIECE_NULL};
 
@@ -103,6 +104,9 @@ enum Piece {P, N, B, R, Q, K,
 
 // Returns 1 if the piece has a valid value, 0 otherwise
 #define is_valid_piece(PIECE) (0 <= PIECE && PIECE <= 12)
+
+// Returns 1 if the piece is of the specified color
+#define is_color(PIECE, COLOR) (6*COLOR <= PIECE && PIECE < 6*COLOR + 6)
 
 // The state of the game.
 enum State {ONGOING, UNKNOWN, DRAW, WIN, LOSE};

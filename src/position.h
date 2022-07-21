@@ -28,4 +28,8 @@ void printf_position(Position* pos);
 // Prints all the information about a position in stdout. 
 void printf_position_debug(Position* pos);
 
+// Returns 1 if the specified player is in check, 0 otherwise.
+// NOTE: The function expects a valid position.
+int is_in_check(Position* pos, enum Color player);
+
 #endif // _POSITION_H

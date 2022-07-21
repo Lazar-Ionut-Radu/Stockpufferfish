@@ -187,6 +187,9 @@ char* position_to_FEN(Position* pos)
 
 enum Piece get_piece(Position* pos, int square)
 {
+    if (!on_board_square(square))
+        return -1;
+
     for (int i = 0; i < PIECE_NUM; i++) {
         if (pos->piece_BB[i] & square_BB(square))
             return i;
@@ -245,4 +248,128 @@ void printf_position_debug(Position* pos)
         printf("\nEn passant square: -\n");
 
     printf("Halfmove / Fullmove clock: %d %d\n", pos->halfmove_clock, pos->fullmove_clock);
+}
+
+int is_in_check(Position* pos, enum Color player)
+{
+    enum Square king_square = square(pos->piece_BB[K + 6 * player]);
+
+    // Looks for checks from straight lines from rooks / queens.
+    // From north:
+    enum Square sq = squareN(king_square);
+    while (on_board_square(sq)) {
+        if (get_piece(pos, sq) == (Q + OPPOSITE_COLOR(player) * 6) || 
+            get_piece(pos, sq) == (R + OPPOSITE_COLOR(player) * 6))
+            return 1;
+        else if (get_piece(pos, sq) == PIECE_NULL)
+            sq = squareN(sq);
+        else 
+            break;
+    }
+
+    // From south:
+    sq = squareS(king_square);
+    while (on_board_square(sq)) {
+        if (get_piece(pos, sq) == (Q + OPPOSITE_COLOR(player) * 6) || 
+            get_piece(pos, sq) == (R + OPPOSITE_COLOR(player) * 6))
+            return 1;
+        else if (get_piece(pos, sq) == PIECE_NULL)
+            sq = squareS(sq);
+        else 
+            break;
+    }
+
+    // From east:
+    sq = squareE(king_square);
+    while (on_board_square(sq)) {
+        if (get_piece(pos, sq) == (Q + OPPOSITE_COLOR(player) * 6) || 
+            get_piece(pos, sq) == (R + OPPOSITE_COLOR(player) * 6))
+            return 1;
+        else if (get_piece(pos, sq) == PIECE_NULL)
+            sq = squareE(sq);
+        else 
+            break;
+    }
+
+    // From west:
+    sq = squareW(king_square);
+    while (on_board_square(sq)) {
+        if (get_piece(pos, sq) == (Q + OPPOSITE_COLOR(player) * 6) || 
+            get_piece(pos, sq) == (R + OPPOSITE_COLOR(player) * 6))
+            return 1;
+        else if (get_piece(pos, sq) == PIECE_NULL)
+            sq = squareW(sq);
+        else 
+            break;
+    }
+
+    // Looks for checks from diagonals from bishops / queens.
+    // From north-west:
+    sq = squareNW(king_square);
+    while (on_board_square(sq)) {
+        if (get_piece(pos, sq) == (Q + OPPOSITE_COLOR(player) * 6) || 
+            get_piece(pos, sq) == (B + OPPOSITE_COLOR(player) * 6))
+            return 1;
+        else if (get_piece(pos, sq) == PIECE_NULL)
+            sq = squareNW(sq);
+        else 
+            break;
+    }
+
+    // From north-east:
+    sq = squareNE(king_square);
+    while (on_board_square(sq)) {
+        if (get_piece(pos, sq) == (Q + OPPOSITE_COLOR(player) * 6) || 
+            get_piece(pos, sq) == (B + OPPOSITE_COLOR(player) * 6))
+            return 1;
+        else if (get_piece(pos, sq) == PIECE_NULL)
+            sq = squareNE(sq);
+        else 
+            break;
+    }
+
+    // From south-east:
+    sq = squareSE(king_square);
+    while (on_board_square(sq)) {
+        if (get_piece(pos, sq) == (Q + OPPOSITE_COLOR(player) * 6) || 
+            get_piece(pos, sq) == (B + OPPOSITE_COLOR(player) * 6))
+            return 1;
+        else if (get_piece(pos, sq) == PIECE_NULL)
+            sq = squareSE(sq);
+        else 
+            break;
+    }
+
+    // From south-west:
+    sq = squareSW(king_square);
+    while (on_board_square(sq)) {
+        if (get_piece(pos, sq) == (Q + OPPOSITE_COLOR(player) * 6) || 
+            get_piece(pos, sq) == (B + OPPOSITE_COLOR(player) * 6))
+            return 1;
+        else if (get_piece(pos, sq) == PIECE_NULL)
+            sq = squareSW(sq);
+        else 
+            break;
+    }
+
+    // Looks for pawn checks.
+    // If the player is white:
+    if (player == WHITE) {
+        if (get_piece(pos, squareNE(king_square)) == p || get_piece(pos, squareNW(king_square)) == p)
+            return 1;
+    }
+    // If the player is black:
+    else {
+        if (get_piece(pos, squareSE(king_square)) == P || get_piece(pos, squareSW(king_square)) == P)
+            return 1;
+    }
+
+    // Looks for knight checks.
+    int knight_offset[8] = {-6, 10, 13, 11, 6, -10, -13, -11};
+    for (int i = 0; i < 8; i++) {
+        if (get_piece(pos, king_square + knight_offset[i]) == (N + 6 * OPPOSITE_COLOR(player)))
+            return 1;
+    }
+
+    return 0;
 }

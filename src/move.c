@@ -20,67 +20,65 @@ void move_to_AN(char **AN, Position* pos, Move move)
     piece = get_piece(pos, origin);
 
     char pieces_chars[12] = {'P', 'N', 'B', 'R', 'Q', 'K',
-                             'p', 'n', 'b', 'r', 'q', 'k'};
+                             'P', 'N', 'B', 'R', 'Q', 'K'};
     // Castling:
     if (is_castling(move)) {
         if (dest == G1 || dest == G8)
             strcpy(*AN, "O-O\0");
         else 
             strcpy(*AN ,"O-O-O\0");
+
+        return;
     }
+
+    int index = 0;
 
     // Pawn moves:
     if (piece == P || piece == p)
     {
-        // Non-capture pawn move:
-        if (abs(dest - origin) <= 2) {
-            *AN[0] = dest / 8 + 'a';
-            *AN[1] = dest % 8 + '1';
-            *AN[2] = '\0';
+        // Pawn capture:
+        if (!(abs(dest - origin) <= 2)) {
+            (*AN)[index++] = origin / 8 + 'a';
+            (*AN)[index++] = 'x';
+        }
 
-            // Promotion:
-            if (is_promotion(move)) {
-                *AN[2] = '=';
-                
-                if (get_promoted_piece(move) == PROM_KNIGHT)
-                    *AN[3] = pieces_chars[N] + 6*pos->turn;
-                else if (get_promoted_piece(move) == PROM_BISHOP)
-                    *AN[3] = pieces_chars[B] + 6*pos->turn;
-                else if (get_promoted_piece(move) == PROM_ROOK)
-                    *AN[3] = pieces_chars[R] + 6*pos->turn;
-                else if (get_promoted_piece(move) == PROM_QUEEN)
-                    *AN[3] = pieces_chars[Q] + 6*pos->turn;
-
-                *AN[4] = '\0';
-            }
-        }   
-        else { // Capture pawn moves:
+        (*AN)[index++] = dest / 8 + 'a';
+        (*AN)[index++] = dest % 8 + '1';
+        
+        // Promotions:
+        if (is_promotion(move)) {
+            (*AN)[index++] = '=';
             
-            *AN[0] = origin / 8 + 'a';
-            *AN[1] = 'x';
-            *AN[2] = dest / 8 + 'a';
-            *AN[3] = dest % 8 + '1';
-            *AN[4] = '\0';
+            if (get_promoted_piece(move) == PROM_KNIGHT)
+                (*AN)[index++] = pieces_chars[N];
+            else if (get_promoted_piece(move) == PROM_BISHOP)
+                (*AN)[index++] = pieces_chars[B];
+            else if (get_promoted_piece(move) == PROM_ROOK)
+                (*AN)[index++] = pieces_chars[R];
+            else if (get_promoted_piece(move) == PROM_QUEEN)
+                (*AN)[index++] = pieces_chars[Q];
+        }
 
-            // Capture into promotion:
-            if (is_promotion(move)) {
-                *AN[4] = '=';
-                
-                if (get_promoted_piece(move) == PROM_KNIGHT)
-                    *AN[5] = pieces_chars[N] + 6*pos->turn;
-                else if (get_promoted_piece(move) == PROM_BISHOP)
-                    *AN[5] = pieces_chars[B] + 6*pos->turn;
-                else if (get_promoted_piece(move) == PROM_ROOK)
-                    *AN[5] = pieces_chars[R] + 6*pos->turn;
-                else if (get_promoted_piece(move) == PROM_QUEEN)
-                    *AN[5] = pieces_chars[Q] + 6*pos->turn;
-
-                *AN[6] = '\0';
-            }
+        // En passant:
+        if (is_en_passant(move)) {
+            strcpy((*AN) + index, " e.p.");
+            index += 5;
         }
     }
+    // Non-pawn moves
+    else {
+        (*AN)[index++] = pieces_chars[piece];
+        
+        // Capture
+        if (!(pos->piece_BB[PIECE_NULL] & square_BB(dest))) {
+            (*AN)[index++] = 'x';
+        }
 
-    *AN[9] = '\0';
+        (*AN)[index++] = dest / 8 + 'a';
+        (*AN)[index++] = dest % 8 + '1';   
+    }
+
+    (*AN)[index++] = '\0';
 }
 
 void make_move(Position* pos, Move move)
